@@ -1,11 +1,27 @@
-import { StatusBar, Text, StyleSheet, View, Image } from "react-native";
+import { StatusBar, Text, StyleSheet, View, Image, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavbarComponent from "../components/navbar.component";
-import Icon from "react-native-vector-icons/Ionicons";
 import HumiditeComponent from "../components/humidite.component";
+import React from "react";
+import { Switch } from "react-native-paper";
+import { WeatherService } from "../services/weather.service";
 
-export default function HomePage() {
+service = new WeatherService();
+
+export default function HomePage({ navigation }) {
+  const [weather, setWeather] = React.useState({});
+
+  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+
+  React.useEffect(() => {
+    service
+      .getWeather("paris", isSwitchOn ? "imperial" : "metric")
+      .then((data) => setWeather(data));
+  }, [isSwitchOn]);
+
   return (
     <LinearGradient
       colors={["#08244F", "#134CB5", "#0B42AB"]}
@@ -15,15 +31,34 @@ export default function HomePage() {
     >
       <SafeAreaView>
         <View style={styles.container}>
-          <NavbarComponent />
+          <NavbarComponent navigation={navigation} />
           <Image
             source={require("../assets/sun-cloud-angled-rain.png")}
             style={styles.image}
           />
-          <Text style={styles.temp}>18° C <Icon name="chevron-down" size={35}/></Text>
+          <Text style={styles.temp}>
+            {weather?.main?.temp}° {isSwitchOn ? "F" : "C"}
+          </Text>
           <Text style={styles.txt}>Precipitations</Text>
-          <Text style={styles.rangeTemp}>Max: 31º Min: 25º</Text>
-          <HumiditeComponent />
+          <View style={styles.rangeTempContainer}>
+            <Text style={styles.rangeTempTxt}>
+              Min: {weather?.main?.temp_max}º
+            </Text>
+            <Text style={[styles.rangeTempTxt, {marginLeft: 10}]} >
+              Max: {weather?.main?.temp_min}º
+            </Text>
+          </View>
+          <View style={styles.switchContainer}>
+            <Switch
+              color="#08244F"
+              value={isSwitchOn}
+              onValueChange={onToggleSwitch}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.txt}>°C / °F</Text>
+          </View>
+
+          <HumiditeComponent weather={weather} />
         </View>
       </SafeAreaView>
       <StatusBar style="auto" />
@@ -56,10 +91,21 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     marginTop: 5,
   },
-  rangeTemp: {
+  rangeTempContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  rangeTempTxt: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "normal",
-    marginTop: 10,
+  },
+  switchContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
   },
 });
