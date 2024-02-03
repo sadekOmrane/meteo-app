@@ -1,7 +1,11 @@
 import { View, StyleSheet, Text } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { IconButton } from 'react-native-paper';
 
-export default function NavbarComponent() {
+export default function NavbarComponent({ navigation}) {
+  
+
+
   return (
     <View style={styles.navbar}>
       <View style={styles.location}>
@@ -9,8 +13,18 @@ export default function NavbarComponent() {
         <Text style={styles.title}>Paris</Text>
       </View>
       <View style={styles.actions}>
-        <Icon name="heart-outline" color="white" size={24} />
-        <Icon name="search" color="white" size={24} style={styles.searchBtn} />
+        <IconButton
+          icon="heart-outline"
+          iconColor="white"
+          size={24}
+          onPress={() => navigation.push("favorites")}
+        />
+        <IconButton
+          icon="magnify"
+          iconColor="white"
+          size={24}
+          onPress={() => navigation.push("search")}
+        />
       </View>
     </View>
   );
