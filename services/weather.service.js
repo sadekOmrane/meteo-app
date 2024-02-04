@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export class WeatherService {
 
-  API_KEY = '3e7377ce4c621172835e49c70dba30b6'
+  API_KEY = '9e398bfd68e8d923932dcc6bdc33126d'
   BASE_URL = 'https://api.openweathermap.org/data/2.5/find'
 
 
@@ -14,6 +14,7 @@ export class WeatherService {
         appid: this.API_KEY,
       },
     });
+    
     return response?.data?.list[0];
   }
 }

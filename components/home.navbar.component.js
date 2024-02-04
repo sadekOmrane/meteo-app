@@ -1,16 +1,18 @@
 import { View, StyleSheet, Text } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
 import { IconButton } from 'react-native-paper';
-
-export default function NavbarComponent({ navigation}) {
-  
+import Icon from "react-native-vector-icons/Ionicons";
 
 
+export default function HomeNavbarComponent({ navigation, address}) {
   return (
     <View style={styles.navbar}>
       <View style={styles.location}>
         <Icon name="location-outline" color="white" size={24} />
-        <Text style={styles.title}>Paris</Text>
+        <View>
+        <Text style={styles.title}>{address?.properties?.name}</Text>
+        {address?.properties?.label && <Text style={styles.label}>{address?.properties?.label}</Text>}
+        </View>
+        
       </View>
       <View style={styles.actions}>
         <IconButton
@@ -45,6 +47,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 24,
     fontWeight: "bold",
+    marginLeft: 10,
+    textTransform: 'capitalize',
+  },
+  label: {
+    color: "grey",
+    fontSize: 13,
+    fontWeight: "normal",
     marginLeft: 10,
   },
   actions: {
