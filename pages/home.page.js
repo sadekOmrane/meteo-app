@@ -1,64 +1,71 @@
 import { StatusBar, Text, StyleSheet, View, Image, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import NavbarComponent from "../components/navbar.component";
+import HomeNavbarComponent from "../components/home.navbar.component";
 import HumiditeComponent from "../components/humidite.component";
 import React from "react";
 import { Switch } from "react-native-paper";
 import { WeatherService } from "../services/weather.service";
+import HomeTempDataComponent from "../components/home.temp.data.component";
 
-service = new WeatherService();
+export default function HomePage({ navigation, route }) {
+  service = new WeatherService();
 
-export default function HomePage({ navigation }) {
+  const city = route?.params?.city || "paris";
+
+  const label = route?.params?.label;
+
   const [weather, setWeather] = React.useState({});
 
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
 
+  const [loading, setLoading] = React.useState(false);
+
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
   React.useEffect(() => {
+    setLoading(true);
     service
-      .getWeather("paris", isSwitchOn ? "imperial" : "metric")
-      .then((data) => setWeather(data));
-  }, [isSwitchOn]);
+      .getWeather(city, isSwitchOn ? "imperial" : "metric")
+      .then((data) => {
+         setWeather(data);
+         setLoading(false)
+      });
+    
+  }, [isSwitchOn, city]);
 
   return (
     <LinearGradient
       colors={["#08244F", "#134CB5", "#0B42AB"]}
-      style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
       <SafeAreaView>
         <View style={styles.container}>
-          <NavbarComponent navigation={navigation} />
-          <Image
-            source={require("../assets/sun-cloud-angled-rain.png")}
-            style={styles.image}
-          />
-          <Text style={styles.temp}>
-            {weather?.main?.temp}° {isSwitchOn ? "F" : "C"}
-          </Text>
-          <Text style={styles.txt}>Precipitations</Text>
-          <View style={styles.rangeTempContainer}>
-            <Text style={styles.rangeTempTxt}>
-              Min: {weather?.main?.temp_max}º
-            </Text>
-            <Text style={[styles.rangeTempTxt, {marginLeft: 10}]} >
-              Max: {weather?.main?.temp_min}º
-            </Text>
-          </View>
-          <View style={styles.switchContainer}>
-            <Switch
-              color="#08244F"
-              value={isSwitchOn}
-              onValueChange={onToggleSwitch}
-              style={{ marginRight: 10 }}
-            />
-            <Text style={styles.txt}>°C / °F</Text>
-          </View>
+          <HomeNavbarComponent navigation={navigation} city={city} label={label} />
+          {weather?.main && (
+            <>
+              <HomeTempDataComponent weather={weather} isSwitchOn={isSwitchOn} />
+              <View style={styles.switchContainer}>
+                <Switch
+                  color="#08244F"
+                  value={isSwitchOn}
+                  onValueChange={onToggleSwitch}
+                  style={{ marginRight: 10 }}
+                />
+                <Text style={styles.txt}>°C / °F</Text>
+              </View>
 
-          <HumiditeComponent weather={weather} />
+              <HumiditeComponent weather={weather} />
+            </>
+          )}
+          {
+            
+            loading ? <Text style={styles.noDataTxt}>Loading...</Text> : console.log(loading)
+          }
+          {
+           !weather?.main && !loading ? <Text style={styles.noDataTxt}>No data found for : {city}</Text> : null 
+          }
         </View>
       </SafeAreaView>
       <StatusBar style="auto" />
@@ -70,8 +77,8 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -107,5 +114,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 20,
+  },
+  noDataTxt: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "meduim",
+    marginTop: 30,
   },
 });

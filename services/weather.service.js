@@ -14,6 +14,7 @@ export class WeatherService {
         appid: this.API_KEY,
       },
     });
+    
     return response?.data?.list[0];
   }
 }
