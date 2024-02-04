@@ -1,11 +1,12 @@
 import { StyleSheet, Text } from "react-native";
 import { List } from "react-native-paper";
 import React from "react";
-export default function SearchListComponent({ loading, address, navigation }) {
+
+export default function FavoriteListComponent({ navigation, favorites, loading }) {
   return (
     <>
       <List.Section style={styles.list}>
-        {address?.map((item, index) => (
+        {favorites?.map((item, index) => (
           <List.Item
             key={index}
             style={styles.listItem}
@@ -25,10 +26,8 @@ export default function SearchListComponent({ loading, address, navigation }) {
           />
         ))}
       </List.Section>
-      {loading ? (
-        <Text style={styles.noDataTxt}>Loading...</Text>
-      ) : null}
-      {address.length == 0 && !loading ? (
+      {loading ? <Text style={styles.noDataTxt}>Loading...</Text> : null}
+      {favorites?.length == 0 && !loading ? (
         <Text style={styles.noDataTxt}>No data found !</Text>
       ) : null}
     </>
@@ -36,29 +35,29 @@ export default function SearchListComponent({ loading, address, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  list: {
-    marginTop: 30,
-  },
-  listItem: {
-    backgroundColor: "#08244F",
-    borderRadius: 12,
-    padding: 5,
-    width: "100%",
-    marginBottom: 10,
-  },
-  listItemTitle: {
-    color: "white",
-    fontSize: 17,
-    fontWeight: "bold",
-  },
-  listItemDesc: {
-    color: "white",
-    fontSize: 12,
-  },
-  noDataTxt: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "meduim",
-    marginTop: 30,
-  },
-});
+    list: {
+      marginTop: 30,
+    },
+    listItem: {
+      backgroundColor: "#08244F",
+      borderRadius: 12,
+      padding: 5,
+      width: "100%",
+      marginBottom: 10,
+    },
+    listItemTitle: {
+      color: "white",
+      fontSize: 17,
+      fontWeight: "bold",
+    },
+    listItemDesc: {
+      color: "white",
+      fontSize: 12,
+    },
+    noDataTxt: {
+      color: "white",
+      fontSize: 20,
+      fontWeight: "meduim",
+      marginTop: 30,
+    },
+  });

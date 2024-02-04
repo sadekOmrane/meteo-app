@@ -3,14 +3,14 @@ import { IconButton } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
 
 
-export default function HomeNavbarComponent({ navigation, city, label}) {
+export default function HomeNavbarComponent({ navigation, address}) {
   return (
     <View style={styles.navbar}>
       <View style={styles.location}>
         <Icon name="location-outline" color="white" size={24} />
         <View>
-        <Text style={styles.title}>{city}</Text>
-        {label && <Text style={styles.label}>{label}</Text>}
+        <Text style={styles.title}>{address?.properties?.name}</Text>
+        {address?.properties?.label && <Text style={styles.label}>{address?.properties?.label}</Text>}
         </View>
         
       </View>
